@@ -73,8 +73,8 @@ if cuda:
 for epoch in range(epochs):
     running_loss = 0
     for ind in range(steps_per_epoch):
-        batch_input_path_list = test_input_path_list[batch_size*ind:batch_size*(ind+1)]
-        batch_label_path_list = test_label_path_list[batch_size*ind:batch_size*(ind+1)]
+        batch_input_path_list = train_input_path_list[batch_size*ind:batch_size*(ind+1)]
+        batch_label_path_list = train_label_path_list[batch_size*ind:batch_size*(ind+1)]
         batch_input = tensorize_image(batch_input_path_list, input_shape, cuda)
         batch_label = tensorize_mask(batch_label_path_list, input_shape, n_classes, cuda)
 
