@@ -1,0 +1,41 @@
+Batch Size:4 Epoch Size:4  Image Count:83
+0.Epoch => Train Loss: 7.867088884115219 Validation Loss:0.2603893280029297
+1.Epoch => Train Loss: 3.0667754560709 Validation Loss:0.16304844617843628
+2.Epoch => Train Loss: 1.897794097661972 Validation Loss:0.11100412905216217
+3.Epoch => Train Loss: 1.390754323452711 Validation Loss:0.09048956632614136
+
+Batch Size:8 Epoch Size:4  Image Count:83
+0.Epoch => Train Loss: 4.631243526935577 Validation Loss:0.3374978303909302
+1.Epoch => Train Loss: 2.0691250413656235 Validation Loss:0.19698679447174072
+2.Epoch => Train Loss: 1.2884490936994553 Validation Loss:0.13640569150447845
+3.Epoch => Train Loss: 0.9654001444578171 Validation Loss:0.11647924780845642
+
+Batch Size:2 Epoch Size:3  Image Count:165
+0.Epoch => Train Loss: 13.910065557807684 Validation Loss:0.07166919112205505
+1.Epoch => Train Loss: 4.226455625146627 Validation Loss:0.04508652910590172
+2.Epoch => Train Loss: 2.7933693267405033 Validation Loss:0.03249307721853256
+
+Batch Size:2 Epoch Size:6  Image Count:83
+0.Epoch => Train Loss: 10.488249078392982 Validation Loss:0.12652213871479034
+1.Epoch => Train Loss: 3.147016931325197 Validation Loss:0.08131879568099976
+2.Epoch => Train Loss: 2.0432599149644375 Validation Loss:0.05798928439617157
+3.Epoch => Train Loss: 1.5849261339753866 Validation Loss:0.04644941911101341
+4.Epoch => Train Loss: 1.2357203010469675 Validation Loss:0.04160461947321892
+5.Epoch => Train Loss: 1.0578866302967072 Validation Loss:0.03852703794836998
+
+Batch Size:2 Epoch Size:5  Image Count:330
+0.Epoch => Train Loss: 23.72680440545082 Validation Loss:0.084649458527565
+1.Epoch => Train Loss: 9.151906395331025 Validation Loss:0.10793019086122513
+2.Epoch => Train Loss: 7.272779064252973 Validation Loss:0.053908251225948334
+
+Batch Size:4 Epoch Size:5  Image Count:330
+0.Epoch => Train Loss: 14.762527704238892 Validation Loss:0.09952805936336517
+1.Epoch => Train Loss: 5.3897116631269455 Validation Loss:0.1354552060365677
+
+Batch Size:4 Epoch Size:5  Image Count:330
+0.Epoch => Train Loss: 14.923882089555264 Validation Loss:0.09410438686609268
+1.Epoch => Train Loss: 5.541162628680468 Validation Loss:0.07370147854089737
+2.Epoch => Train Loss: 3.9365703128278255 Validation Loss:0.26970502734184265
+3.Epoch => Train Loss: 4.481693686917424 Validation Loss:0.036722924560308456
+4.Epoch => Train Loss: 2.7868765108287334 Validation Loss:0.0313749685883522
+
