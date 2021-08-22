@@ -9,11 +9,11 @@ import tqdm
 import torch
 import cv2
 ######### PARAMETERS ##########
-valid_size = 0.3
-test_size  = 0.3
+valid_size = 0.15
+test_size  = 0.01
 batch_size = 4
-epochs = 5
-cuda = False
+epochs = 25
+cuda = True
 input_shape = (224, 224)
 n_classes = 2
 ###############################
@@ -134,9 +134,9 @@ for epoch in range(epochs):
         file_object.write("\n")
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
-torch.save(model, 'model.pt')
+torch.save(model, 'colab_model1.pt')
 print("Model Saved!")
-best_model = torch.load('model.pt')
+best_model = torch.load('colab_model1.pt')
 
 
 test_data_path='../data/test_data'
@@ -163,4 +163,4 @@ def predict(test_input_path_list):
         predict_path=predict_name.replace('test_data', 'predicted_masked')
         cv2.imwrite(predict_path,opac_image.astype(np.uint8))
 
-predict(test_data)
+predict(test_input_path_list)
