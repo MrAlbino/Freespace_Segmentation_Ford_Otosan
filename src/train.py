@@ -8,6 +8,8 @@ import torch.optim as optim
 import tqdm
 import torch
 import cv2
+from matplotlib import pyplot as plt
+import matplotlib.ticker as mticker
 ######### PARAMETERS ##########
 valid_size = 0.15
 test_size  = 0.01
@@ -134,10 +136,9 @@ for epoch in range(epochs):
         file_object.write("\n")
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
-torch.save(model, 'colab_model1.pt')
+torch.save(model, 'colab_model_test.pt')
 print("Model Saved!")
-best_model = torch.load('colab_model1.pt')
-
+best_model = torch.load('colab_model_test.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))
@@ -160,7 +161,33 @@ def predict(test_input_path_list):
         mg[mask==0 ,:] = (255, 0, 125)
         opac_image=(mg/2+cpy_img/2).astype(np.uint8)
         predict_name=batch_test[0]
-        predict_path=predict_name.replace('test_data', 'predicted_masked')
+        predict_path=predict_name.replace('images', 'predicted_masked')
         cv2.imwrite(predict_path,opac_image.astype(np.uint8))
 
 predict(test_input_path_list)
+ 
+def draw_graph(val_losses,train_losses,epochs):
+    norm_validation = [float(i)/sum(val_losses) for i in val_losses]
+    norm_train = [float(i)/sum(train_losses) for i in train_losses]
+    epoch_numbers=list(range(1,epochs+1,1))
+    plt.figure(figsize=(12,6))
+    plt.subplot(2, 2, 1)
+    plt.plot(epoch_numbers,norm_validation,color="red") 
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+    plt.title('Train losses')
+    plt.subplot(2, 2, 2)
+    plt.plot(epoch_numbers,norm_train,color="blue")
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+    plt.title('Validation losses')
+    plt.subplot(2, 1, 2)
+    plt.plot(epoch_numbers,norm_validation, 'r-',color="red")
+    plt.plot(epoch_numbers,norm_train, 'r-',color="blue")
+    plt.legend(['w=1','w=2'])
+    plt.title('Train and Validation Losses')
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+    
+    
+    plt.show()
+
+draw_graph(val_losses,train_losses,epochs)
+
