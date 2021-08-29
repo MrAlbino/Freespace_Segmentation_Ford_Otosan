@@ -11,10 +11,10 @@ import cv2
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
 ######### PARAMETERS ##########
-valid_size = 0.15
-test_size  = 0.01
+valid_size = 0.3
+test_size  = 0.1
 batch_size = 4
-epochs = 25
+epochs = 10
 cuda = True
 input_shape = (224, 224)
 n_classes = 2
@@ -66,7 +66,6 @@ steps_per_epoch = len(train_input_path_list)//batch_size
 
 # CALL MODEL
 model = FoInternNet(input_size=input_shape, n_classes=2)
-
 # DEFINE LOSS FUNCTION AND OPTIMIZER
 criterion = nn.BCELoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
@@ -126,9 +125,9 @@ for epoch in range(epochs):
                 outputs = model(batch_input)
                 loss = criterion(outputs, batch_label)
                 val_loss += loss.item()
-                val_losses.append(val_loss)
-                break
-
+                
+                #break
+            val_losses.append(val_loss)
             print('validation loss on epoch {}: {}'.format(epoch, val_loss))
     with open("losses.txt", "a") as file_object:
     # Append 'hello' at the end of file
@@ -136,9 +135,9 @@ for epoch in range(epochs):
         file_object.write("\n")
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
-torch.save(model, 'colab_model_test.pt')
+torch.save(model, 'colab_test.pt')
 print("Model Saved!")
-best_model = torch.load('colab_model_test.pt')
+best_model = torch.load('colab_test.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))
@@ -174,11 +173,11 @@ def draw_graph(val_losses,train_losses,epochs):
     plt.subplot(2, 2, 1)
     plt.plot(epoch_numbers,norm_validation,color="red") 
     plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
-    plt.title('Train losses')
+    plt.title('Validation losses')
     plt.subplot(2, 2, 2)
     plt.plot(epoch_numbers,norm_train,color="blue")
     plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
-    plt.title('Validation losses')
+    plt.title('Train losses')
     plt.subplot(2, 1, 2)
     plt.plot(epoch_numbers,norm_validation, 'r-',color="red")
     plt.plot(epoch_numbers,norm_train, 'r-',color="blue")
