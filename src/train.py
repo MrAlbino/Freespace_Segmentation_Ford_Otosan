@@ -14,7 +14,7 @@ import matplotlib.ticker as mticker
 valid_size = 0.3
 test_size  = 0.1
 batch_size = 4
-epochs = 10
+epochs = 20
 cuda = True
 input_shape = (224, 224)
 n_classes = 2
@@ -68,8 +68,8 @@ steps_per_epoch = len(train_input_path_list)//batch_size
 model = FoInternNet(input_size=input_shape, n_classes=2)
 # DEFINE LOSS FUNCTION AND OPTIMIZER
 criterion = nn.BCELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-
+# try new below  - optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 # IF CUDA IS USED, IMPORT THE MODEL INTO CUDA
 if cuda:
     model = model.cuda()
@@ -126,7 +126,7 @@ for epoch in range(epochs):
                 loss = criterion(outputs, batch_label)
                 val_loss += loss.item()
                 
-                #break
+                break
             val_losses.append(val_loss)
             print('validation loss on epoch {}: {}'.format(epoch, val_loss))
     with open("losses.txt", "a") as file_object:
@@ -135,9 +135,9 @@ for epoch in range(epochs):
         file_object.write("\n")
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
-torch.save(model, 'colab_test.pt')
+torch.save(model, 'colab_test_adam1.pt')
 print("Model Saved!")
-best_model = torch.load('colab_test.pt')
+best_model = torch.load('colab_test_adam1.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))
