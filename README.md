@@ -44,7 +44,7 @@
 
      * **Expected Hierarcy**:
          
-        ![image](folder_hierarcy.png)
+        ![image](images_for_readme\folder_hierarcy.png)
 
   
 3. ## Install Required Libraries
