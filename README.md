@@ -2,13 +2,13 @@
 1. ## Installation
 
     In order to clone the repository to your local computer open command prompt or terminal and run the command given below.
-```bash
-git clone https://github.com/MrAlbino/Semantic_Segmentation_Ford_Otosan.git
-```
+    ```bash
+    git clone https://github.com/MrAlbino/Semantic_Segmentation_Ford_Otosan.git
+    ```
 
 2. ## Creating Virtual Environment (Optional)
-
-    * ### For Windows:
+    > You have to be in the root directory for these commands.
+    * ### **For Windows**:
       * Create Virtual Environment:
 
         ```bash
@@ -24,7 +24,7 @@ git clone https://github.com/MrAlbino/Semantic_Segmentation_Ford_Otosan.git
             ```bash
             deactivate
             ```
-    * ### For Linux:
+    * ### **For Linux**:
         * Create Virtual Environment:
 
             ```bash
@@ -40,8 +40,14 @@ git clone https://github.com/MrAlbino/Semantic_Segmentation_Ford_Otosan.git
             ```bash
             deactivate
             ```
+    > After all these processes the expected folder hierarcy can be seen below.
+
+     * **Expected Hierarcy**:
+         
+        ![image](folder_hierarcy.png)
+
+  
 3. ## Install Required Libraries
-   * You have to be in the root directory for this command.
    * Virtual environment must be activated before running this command.
   
         ```bash
