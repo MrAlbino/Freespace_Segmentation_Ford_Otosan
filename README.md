@@ -1,4 +1,4 @@
-# Build
+# **Build**
 1. ## Installation
 
     In order to clone the repository to your local computer open command prompt or terminal and run the command given below.
@@ -53,3 +53,10 @@
         ```bash
         pip install -r requirements.txt
         ``` 
+# **Explanation**
+
+1. ## Purpose
+    Our main purpose in this project is to detecting driveable areas for autonomous vehicles.
+
+2. ## Expected Result
+   ![image](images_for_readme/result.PNG)
