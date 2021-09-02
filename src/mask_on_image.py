@@ -6,15 +6,19 @@ MASK_DIR  = '../data/masks'
 IMAGE_DIR = '../data/images'
 IMAGE_OUT_DIR = '../data/masked_images'
 
-'''MASK_DIR  = '../data/predicted_image'
-IMAGE_DIR = '../data/test_data'
-IMAGE_OUT_DIR = '../data/predicted_masked'''
+'''MASK_DIR  = '../data/aug_masks2'
+IMAGE_DIR = '../data/aug_photo2'
+IMAGE_OUT_DIR = '../data/aug_mask_test'
+'''
 if not os.path.exists(IMAGE_OUT_DIR):
     os.mkdir(IMAGE_OUT_DIR)
 
-
-mask_list = os.listdir(MASK_DIR)
-
+mask_list=[] #empty list created
+for name in os.listdir(MASK_DIR):
+    if not name.startswith('.'):  
+        mask_list.append(os.path.join(name))
+mask_list.sort()
+#mask_list = os.listdir(MASK_DIR)
 for mask_name in tqdm.tqdm(mask_list):
     mask_name_without_ex = mask_name.split('.')[0]
 
