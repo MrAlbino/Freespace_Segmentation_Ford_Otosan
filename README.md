@@ -5,6 +5,7 @@
     ```bash
     git clone https://github.com/MrAlbino/Semantic_Segmentation_Ford_Otosan.git
     ```
+&nbsp;
 
 2. ## **Creating Virtual Environment (Optional)**
     > You have to be in the root directory for these commands.
@@ -46,22 +47,29 @@
          
         ![image](images_for_readme/folder_hierarcy.PNG)
 
-  
+
+&nbsp;
+
 3. ## **Install Required Libraries**
    * Virtual environment must be activated before running this command.
   
         ```bash
         pip install -r requirements.txt
         ``` 
+    &nbsp;
+--- 
+&nbsp;
 # **Explanation**
 
 1. ## **Purpose**
     Our main purpose in this project is to detecting driveable areas for autonomous vehicles.
 
-2. ## **Expected Result:**
+&nbsp;
+
+1. ## **Expected Result:**
 
    ![image](images_for_readme/result.png)
-
+&nbsp;
 3. ## **Create Mask with Json**
    
    >This is the explanation of [json2mask.py](/src/json2mask.py)
@@ -81,9 +89,14 @@
      ### **Expected Mask Format:**
 
     ![image](images_for_readme/example_mask.png)
+&nbsp;
 
-4. ## **Colorize and Test Masks**
-   >This is the explanation of [json2mask.py](/src/mask_on_image.py)
+1. ## **Colorize and Test Masks**
+   >This is the explanation of [mask_on_image.py](/src/mask_on_image.py)
 
-   We are ready to test our masks now. In this part we will create a copy of our mask image and then applying some colors to it. So we can check, is our mask is ready to go ?
+   We are ready to test our masks now. In this part we will apply our mask on raw image and then applying some colors too. So we can check, is our mask ready to go ?
+   
+   **See transaction visualization below, left-to-right:**
+
+   ![image](images_for_readme/mask_on_image.png)
 
