@@ -1,4 +1,4 @@
-from model import FoInternNet
+from model import UNet
 from preprocess import tensorize_image, tensorize_mask, image_mask_check
 import os
 import glob
@@ -6,14 +6,18 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import tqdm
-import torch
+import torch,gc
 import cv2
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
+print("GPU Name: "+torch.cuda.get_device_name(0))
+print("Cuda Available: "+str(torch.cuda.is_available()))
+gc.collect()
+torch.cuda.empty_cache()
 ######### PARAMETERS ##########
 valid_size = 0.3
 test_size  = 0.1
-batch_size = 4
+batch_size = 8
 epochs = 20
 cuda = True
 input_shape = (224, 224)
@@ -26,19 +30,27 @@ ROOT_DIR = os.path.join(SRC_DIR, '..')
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 IMAGE_DIR = os.path.join(DATA_DIR, 'images')
 MASK_DIR = os.path.join(DATA_DIR, 'masks')
+AUG_IMAGE=os.path.join(DATA_DIR,'aug_photo')
+AUG_MASK=os.path.join(DATA_DIR,'aug_masks')
 ###############################
+aug_count=len(os.listdir(AUG_IMAGE))
 
-
-# PREPARE IMAGE AND MASK LISTS
+# PREPARE IMAGE , MASK ,AUGMENTATION LISTS
 image_path_list = glob.glob(os.path.join(IMAGE_DIR, '*'))
 image_path_list.sort()
 
 mask_path_list = glob.glob(os.path.join(MASK_DIR, '*'))
 mask_path_list.sort()
 
+aug_path_list = glob.glob(os.path.join(AUG_IMAGE, '*'))
+aug_path_list.sort()
+aug_mask_path_list = glob.glob(os.path.join(AUG_MASK, '*'))
+aug_mask_path_list.sort()
+# PREPARE IMAGE , MASK ,AUGMENTATION LISTS
+
 # DATA CHECK
 image_mask_check(image_path_list, mask_path_list)
-
+image_mask_check(aug_path_list, aug_mask_path_list)
 # SHUFFLE INDICES
 indices = np.random.permutation(len(image_path_list))
 # DEFINE TEST AND VALID INDICES
@@ -57,19 +69,27 @@ valid_label_path_list = mask_path_list[test_ind:valid_ind]
 train_input_path_list = image_path_list[valid_ind:]
 train_label_path_list = mask_path_list[valid_ind:]
 
+#print(str(len(train_input_path_list))+"+"+str(len(aug_path_list)))
+aug_size=int(len(aug_mask_path_list)/2)
+train_input_path_list=aug_path_list[:aug_size]+train_input_path_list+aug_path_list[aug_size:]
+train_label_path_list=aug_mask_path_list[:aug_size]+train_label_path_list+aug_mask_path_list[aug_size:]
+
 with open("losses.txt", "a") as file_object:
     file_object.write("Batch Size:{} Epoch Size:{}  Image Count:{}".format(batch_size,epochs,len(train_input_path_list)))
     file_object.write("\n")
-
 # DEFINE STEPS PER EPOCH
 steps_per_epoch = len(train_input_path_list)//batch_size
 
 # CALL MODEL
-model = FoInternNet(input_size=input_shape, n_classes=2)
+#             model = FoInternNet(input_size=input_shape, n_classes=2)
+model = UNet(n_channels=3, n_classes=2, bilinear=True)
 # DEFINE LOSS FUNCTION AND OPTIMIZER
-criterion = nn.BCELoss()
+#                 criterion = nn.BCELoss()
+criterion =  nn.BCELoss()
+
 # try new below  - optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+#              optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # IF CUDA IS USED, IMPORT THE MODEL INTO CUDA
 if cuda:
     model = model.cuda()
@@ -89,7 +109,7 @@ for epoch in range(epochs):
     train_input_path_list=list(zipped_list[0])
     train_label_path_list=list(zipped_list[1])
     
-    for ind in range(steps_per_epoch):
+    for ind in tqdm.tqdm(range(steps_per_epoch)):
         batch_input_path_list = train_input_path_list[batch_size*ind:batch_size*(ind+1)]
         #train_input_path_list [0: 4] gets first 4 elements on first entry
         #in the second loop train_input_list [4: 8] gets the second 4 elements
@@ -112,32 +132,35 @@ for epoch in range(epochs):
 
         running_loss += loss.item()# loss.item () takes the scalar value held in loss.
 
-        print(ind)
         #validation 
         if ind == steps_per_epoch-1:
             
             train_losses.append(running_loss)
             print('training loss on epoch {}: {}'.format(epoch, running_loss))
             val_loss = 0
-            for (valid_input_path, valid_label_path) in zip(valid_input_path_list, valid_label_path_list):
-                batch_input = tensorize_image([valid_input_path], input_shape, cuda)
-                batch_label = tensorize_mask([valid_label_path], input_shape, n_classes, cuda)
-                outputs = model(batch_input)
-                loss = criterion(outputs, batch_label)
-                val_loss += loss.item()
+            model.eval()
+            with torch.no_grad():
+                for (valid_input_path, valid_label_path) in zip(valid_input_path_list, valid_label_path_list):
+                    batch_input = tensorize_image([valid_input_path], input_shape, cuda)
+                    batch_label = tensorize_mask([valid_label_path], input_shape, n_classes, cuda)
+                    outputs = model(batch_input)
+                    loss = criterion(outputs, batch_label)
+                    val_loss += loss.item()
                 
-                break
+                    break
             val_losses.append(val_loss)
             print('validation loss on epoch {}: {}'.format(epoch, val_loss))
+            torch.save(model, 'colab_unet_sgd_aug_20.pt')
+            print("Model Saved!")
+            model.train()
     with open("losses.txt", "a") as file_object:
     # Append 'hello' at the end of file
         file_object.write("{}.Epoch => Train Loss: {} Validation Loss:{}".format(epoch,running_loss,val_loss))
         file_object.write("\n")
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
-torch.save(model, 'colab_test_adam1.pt')
-print("Model Saved!")
-best_model = torch.load('colab_test_adam1.pt')
+
+best_model = torch.load('colab_unet_sgd_aug_20.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))

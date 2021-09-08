@@ -1,3 +1,7 @@
+# author: ayberk kose as mralbino
+
+#testing model here
+
 import torch
 import glob
 import os
@@ -7,34 +11,18 @@ import cv2
 
 input_shape = (224, 224)
 n_classes=2
-cuda=True
+cuda=False
 from preprocess import tensorize_image
 TEST_DIR='../data/p1_test/img'
 MASK_DIR='../data/p1_predict/img'
-model_path='colab_model_test.pt'
-model=torch.load(model_path)
+model_path='colab_unet_sgd_aug_20.pt'
+model=torch.load(model_path,map_location=torch.device('cpu'))
 
 if cuda:
   model=model.cuda()
 model.eval()
 test=os.listdir(TEST_DIR)
-#test=glob.glob('../data/test_data/*')
-#test_mask=glob.glob('../data/test_mask_data/*')
 
-'''y=0
-for test_img in tqdm.tqdm(test):
-    image_path=os.path.join(TEST_DIR,test_img)
-    tensorized_test_image = tensorize_image([image_path], input_shape, cuda)
-    output=model(tensorized_test_image)
-    mask_name_without_ex = test_img.split('.')[0]
-
-    # Access required folders
-    mask_path     = os.path.join(MASK_DIR, mask_name_without_ex+'.png')
-    torchvision.utils.save_image(output,mask_path)
-    y+=1
-    #('../data/predicted_image/'+str(y)+'.png')
-    '''
-    
 test_data = glob.glob(os.path.join(TEST_DIR, '*'))
 def predict(test_input_path_list):
 
