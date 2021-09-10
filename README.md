@@ -70,7 +70,7 @@
 
    ![image](images_for_readme/result.png)
 &nbsp;
-. ## **Create Mask with Json**
+3. ## **Create Mask with Json**
    
    >This is the explanation of [json2mask.py](/src/json2mask.py)
 
@@ -142,9 +142,115 @@
             assert image_name == mask_name, "Image and mask name does not match {} - {}".format(image_name, mask_name)
     ```
 
-5. ## **Model**
+6. ## **Model**
 
     >This is the explanation of [model.py](/src/model.py)
+    
+    In this project we will be using U-Net model. There are other models like FCN, Mask RCNN but U-Net is much faster to run so we will continue with it. Name of U-Net comes from the architecture itself, similar to 'U' shape you can see below.
+
+    ![image](images_for_readme/unet.png)
+
+7. ## **Train**
+    >This is the explanation of [train.py](/src/train.py)
+
+    Now we are ready to train our model. First we define our essential parameters for training.
+    ```bash
+    valid_size = 0.3
+    test_size  = 0.1
+    batch_size = 8
+    epochs = 25
+    cuda = True
+    input_shape = (224, 224)
+    n_classes = 2
+    ```
+    After that we define our directory paths.
+    ```bash
+    SRC_DIR = os.getcwd()
+    ROOT_DIR = os.path.join(SRC_DIR, '..')
+    DATA_DIR = os.path.join(ROOT_DIR, 'data')
+    IMAGE_DIR = os.path.join(DATA_DIR, 'images')
+    MASK_DIR = os.path.join(DATA_DIR, 'masks')
+    AUG_IMAGE=os.path.join(DATA_DIR,'aug_photo')
+    AUG_MASK=os.path.join(DATA_DIR,'aug_masks')
+    ```
+    Now we are ready to obtain our image paths into the lists.
+
+    ```bash
+    image_path_list = glob.glob(os.path.join(IMAGE_DIR, '*'))
+    image_path_list.sort()
+
+    mask_path_list = glob.glob(os.path.join(MASK_DIR, '*'))
+    mask_path_list.sort()
+
+    aug_path_list = glob.glob(os.path.join(AUG_IMAGE, '*'))
+    aug_path_list.sort()
+
+    aug_mask_path_list = glob.glob(os.path.join(AUG_MASK, '*'))
+    aug_mask_path_list.sort()
+    ```
+    Before continuing we must check our masks and images, are they matching ?
+
+    ```bash
+    image_mask_check(image_path_list, mask_path_list)
+    image_mask_check(aug_path_list, aug_mask_path_list)
+    ```
+
+    If there are no errors we can continue. Next step is slicing dataset into three parts; test,train,validation.
+
+    ```bash
+    # SHUFFLE INDICES
+    indices = np.random.permutation(len(image_path_list))
+    # DEFINE TEST AND VALID INDICES
+    test_ind  = int(len(indices) * test_size)
+    valid_ind = int(test_ind + len(indices) * valid_size)
+
+    # SLICE TEST DATASET FROM THE WHOLE DATASET
+    test_input_path_list = image_path_list[:test_ind]
+    test_label_path_list = mask_path_list[:test_ind]
+
+    # SLICE VALID DATASET FROM THE WHOLE DATASET
+    valid_input_path_list = image_path_list[test_ind:valid_ind]
+    valid_label_path_list = mask_path_list[test_ind:valid_ind]
+
+    # SLICE TRAIN DATASET FROM THE WHOLE DATASET
+    train_input_path_list = image_path_list[valid_ind:]
+    train_label_path_list = mask_path_list[valid_ind:]
+    ```
+
+    Last step is to adding augmentated images into train dataset.
+
+    ```bash
+    aug_size=int(len(aug_mask_path_list)/2)
+    train_input_path_list=aug_path_list[:aug_size]+train_input_path_list+aug_path_list[aug_size:]
+    train_label_path_list=aug_mask_path_list[:aug_size]+train_label_path_list+aug_mask_path_list[aug_size:]
+    ```
+
+    Dataset slicing is done. Now we are going to call our model, define loss function and optimizer.
+
+    ```bash
+    model = UNet(n_channels=3, n_classes=2, bilinear=True)
+    criterion =  nn.BCELoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    #optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9) #you can use this too
+    ```
+    
+    I used CUDA in this project so the following code is necessary. At the beginning we assigned to cuda variable 'True' if you don't use CUDA set it to 'False'.
+    ```bash
+    if cuda:
+        model = model.cuda()
+    ```
+
+8. ## **Augmentation**
+
+    >This is the explanation of [augmentation.py](/src/augmentation.py)
+    and [augmentation_mirror.py](/src/augmentation_mirror.py)
+
+
+
+
+
+
+
 
     
 

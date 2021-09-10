@@ -44,15 +44,15 @@ train_label_path_list = mask_path[valid_ind:]#We got the elements of the mask_pa
 
 for image in tqdm.tqdm(train_input_path_list):
     img=Image.open(image)
-    #color_aug = T.ColorJitter(brightness=0.4, contrast=0.4, hue=0.06)
-    new_img = T.functional.adjust_brightness(img,brightness_factor=0.5)
-    new_img=T.functional.adjust_hue(new_img,hue_factor=0.06)
-    #img_aug = color_aug(img)
+    color_aug = T.ColorJitter(brightness=0.4, contrast=0.4, hue=0.06)
+    #new_img = T.functional.adjust_brightness(img,brightness_factor=0.7)
+    #new_img=T.functional.adjust_hue(new_img,hue_factor=0.06)
+    img_aug = color_aug(img)
     new_path=image[:-4]+"-1"+".jpg"
     new_path=new_path.replace('images', 'aug_photo')
-    #img_aug=np.array(img_aug)
-    #cv2.imwrite(new_path,img_aug)
-    new_img.save(new_path)
+    img_aug=np.array(img_aug)
+    cv2.imwrite(new_path,img_aug)
+    #new_img.save(new_path)
 
 for mask in tqdm.tqdm(train_label_path_list):
     #msk=cv2.imread(mask)
@@ -62,6 +62,6 @@ for mask in tqdm.tqdm(train_label_path_list):
     newm_path=newm_path.replace('masks', 'aug_masks')
     new_mask.save(newm_path)
 
-    
+
     
     
