@@ -18,7 +18,7 @@ torch.cuda.empty_cache()
 valid_size = 0.3
 test_size  = 0.1
 batch_size = 8
-epochs = 20
+epochs = 25
 cuda = True
 input_shape = (224, 224)
 n_classes = 2
@@ -88,8 +88,8 @@ model = UNet(n_channels=3, n_classes=2, bilinear=True)
 criterion =  nn.BCELoss()
 
 # try new below  - optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-#              optimizer = optim.Adam(model.parameters(), lr=0.001)
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+#optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # IF CUDA IS USED, IMPORT THE MODEL INTO CUDA
 if cuda:
     model = model.cuda()
@@ -150,7 +150,7 @@ for epoch in range(epochs):
                     break
             val_losses.append(val_loss)
             print('validation loss on epoch {}: {}'.format(epoch, val_loss))
-            torch.save(model, 'colab_unet_sgd_aug_20.pt')
+            torch.save(model, 'colab_unet_adam_aug_25.pt')
             print("Model Saved!")
             model.train()
     with open("losses.txt", "a") as file_object:
@@ -160,7 +160,7 @@ for epoch in range(epochs):
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
 
-best_model = torch.load('colab_unet_sgd_aug_20.pt')
+best_model = torch.load('colab_unet_adam_aug_25.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))

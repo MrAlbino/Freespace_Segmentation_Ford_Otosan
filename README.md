@@ -244,10 +244,20 @@
 
     >This is the explanation of [augmentation.py](/src/augmentation.py)
     and [augmentation_mirror.py](/src/augmentation_mirror.py)
+    * ### __Augmentation__
+        Here we are going to try to make our predictions get better, because our model predicts little bit bad in dark images. We will reducing brightness of images and putting into train set like complete different images. In this part of the augmentation we are not changing only brightness also hue and contrast values changing.
+
+        ![image](images_for_readme/augmentation.png)
+
+    * ### __Augmentation Mirror__
+        The difference is here only mirroring image, not changing any other value. I didn't use this augmentation type in the project but if you need mirroring images feel free to use this.
+
+        ![image](images_for_readme/aug_mirrored.png)
 
 
+9. ## **Loss Datas**
 
-
+    >This section is about [losses.txt](/src/losses.txt)
 
 
 
