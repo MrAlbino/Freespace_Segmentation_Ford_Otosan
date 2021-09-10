@@ -102,6 +102,8 @@
 
    As you can see our masks are working fine, we can continue.
 
+&nbsp;
+
 4. ## **Preprocess**
    >This is the explanation of [preprocess.py](/src/preprocess.py)
 
@@ -142,6 +144,8 @@
             assert image_name == mask_name, "Image and mask name does not match {} - {}".format(image_name, mask_name)
     ```
 
+&nbsp;
+
 6. ## **Model**
 
     >This is the explanation of [model.py](/src/model.py)
@@ -149,6 +153,8 @@
     In this project we will be using U-Net model. There are other models like FCN, Mask RCNN but U-Net is much faster to run so we will continue with it. Name of U-Net comes from the architecture itself, similar to 'U' shape you can see below.
 
     ![image](images_for_readme/unet.png)
+
+&nbsp;
 
 7. ## **Train**
     >This is the explanation of [train.py](/src/train.py)
@@ -239,6 +245,7 @@
     if cuda:
         model = model.cuda()
     ```
+&nbsp;
 
 8. ## **Augmentation**
 
@@ -254,10 +261,27 @@
 
         ![image](images_for_readme/aug_mirrored.png)
 
+    * ### __Before Augmentation vs After Augmentation__
+
+        ![image](images_for_readme/before_after.png)
+
+&nbsp;
 
 9. ## **Loss Datas**
 
     >This section is about [losses.txt](/src/losses.txt)
+
+    I've added a text file named losses.txt so after every step of epoch validation and train loss values are being calculated. I don't want to lose them everytime they are calculated i saved it inside the 'losses.txt' it helps me to analyze past train transactions.
+
+&nbsp;
+
+# **Result**
+    
+* ## __Outputs__
+    ![image](images_for_readme/result1.png)
+    ![image](images_for_readme/result2.png)
+    ![image](images_for_readme/result3.png)
+    ![image](images_for_readme/result4.png)
 
 
 
