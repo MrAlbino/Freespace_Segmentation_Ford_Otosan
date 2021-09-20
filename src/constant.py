@@ -1,3 +1,5 @@
+# author: ayberk kose as mralbino
+
 import os
 
 # Path to jsons
@@ -15,7 +17,6 @@ if not os.path.exists(IMAGE_OUT_DIR):
 
 # Path to original images
 IMAGE_DIR = '../data/images'
-
 
 # In order to visualize masked-image(s), change "False" with "True"
 VISUALIZE = True

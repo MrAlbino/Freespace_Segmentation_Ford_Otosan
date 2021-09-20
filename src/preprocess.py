@@ -1,3 +1,5 @@
+# author: ayberk kose as mralbino
+
 import cv2, torch
 import numpy as np
 import glob

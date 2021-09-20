@@ -4,15 +4,8 @@
 
 import numpy as np
 import cv2
-import json
 import os
-import torch
 import tqdm 
-from matplotlib import pyplot as plt
-from skimage.transform import rotate, AffineTransform, warp
-from skimage.util import random_noise
-from skimage import transform
-import random 
 from torchvision import transforms as T
 from PIL import Image
 
@@ -34,8 +27,8 @@ for name in os.listdir(MASK_DIR):
     mask_path.append(os.path.join(MASK_DIR,name))
 mask_path.sort()
 
-valid_size = 0.3
-test_size  = 0.1
+valid_size = 0.1
+test_size  = 0.04
 indices = np.random.permutation(len(image_path))
 test_ind  = int(len(indices) * test_size)
 valid_ind = int(test_ind + len(indices) * valid_size)
@@ -44,24 +37,19 @@ train_label_path_list = mask_path[valid_ind:]#We got the elements of the mask_pa
 
 for image in tqdm.tqdm(train_input_path_list):
     img=Image.open(image)
-    color_aug = T.ColorJitter(brightness=0.4, contrast=0.4, hue=0.06)
-    #new_img = T.functional.adjust_brightness(img,brightness_factor=0.7)
-    #new_img=T.functional.adjust_hue(new_img,hue_factor=0.06)
+    color_aug = T.ColorJitter(brightness=0.5, contrast=0.5, hue=0.04)
     img_aug = color_aug(img)
     new_path=image[:-4]+"-1"+".jpg"
     new_path=new_path.replace('images', 'aug_photo')
     img_aug=np.array(img_aug)
     cv2.imwrite(new_path,img_aug)
-    #new_img.save(new_path)
 
 for mask in tqdm.tqdm(train_label_path_list):
-    #msk=cv2.imread(mask)
     old_mask=Image.open(mask)
     new_mask=old_mask
     newm_path=mask[:-4]+"-1"+".png"
     newm_path=newm_path.replace('masks', 'aug_masks')
     new_mask.save(newm_path)
-
 
     
     

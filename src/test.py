@@ -15,9 +15,9 @@ cuda=False
 from preprocess import tensorize_image
 TEST_DIR='../data/p1_test/img'
 MASK_DIR='../data/p1_predict/img'
-model_path='colab_unet_sgd_aug_20.pt'
+model_path='colab_unet_adam_aug_30_23.pt'
 model=torch.load(model_path,map_location=torch.device('cpu'))
-
+#model=torch.load(model_path)
 if cuda:
   model=model.cuda()
 model.eval()

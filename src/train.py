@@ -1,3 +1,5 @@
+# author: ayberk kose as mralbino
+
 from model import UNet
 from preprocess import tensorize_image, tensorize_mask, image_mask_check
 import os
@@ -10,15 +12,16 @@ import torch,gc
 import cv2
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
+
 print("GPU Name: "+torch.cuda.get_device_name(0))
 print("Cuda Available: "+str(torch.cuda.is_available()))
 gc.collect()
 torch.cuda.empty_cache()
 ######### PARAMETERS ##########
-valid_size = 0.3
-test_size  = 0.1
-batch_size = 8
-epochs = 25
+valid_size = 0.1
+test_size  = 0.04
+batch_size = 16
+epochs = 30
 cuda = True
 input_shape = (224, 224)
 n_classes = 2
@@ -28,13 +31,15 @@ n_classes = 2
 SRC_DIR = os.getcwd()
 ROOT_DIR = os.path.join(SRC_DIR, '..')
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
-IMAGE_DIR = os.path.join(DATA_DIR, 'images')
-MASK_DIR = os.path.join(DATA_DIR, 'masks')
-AUG_IMAGE=os.path.join(DATA_DIR,'aug_photo')
-AUG_MASK=os.path.join(DATA_DIR,'aug_masks')
+IMAGE_DIR = os.path.join(DATA_DIR, '/content/sample_data/images')
+MASK_DIR = os.path.join(DATA_DIR, '/content/sample_data/masks')
+AUG_IMAGE=os.path.join(DATA_DIR,'/content/sample_data/aug_photo')
+AUG_MASK=os.path.join(DATA_DIR,'/content/sample_data/aug_masks')
+AUG2_IMAGE=os.path.join(DATA_DIR,'/content/sample_data/aug2_photos')
+AUG2_MASK=os.path.join(DATA_DIR,'/content/sample_data/aug2_masks')
 ###############################
-aug_count=len(os.listdir(AUG_IMAGE))
-
+aug2_count=len(os.listdir(AUG2_IMAGE))
+print("Aug2 Size:"+str(aug2_count))
 # PREPARE IMAGE , MASK ,AUGMENTATION LISTS
 image_path_list = glob.glob(os.path.join(IMAGE_DIR, '*'))
 image_path_list.sort()
@@ -46,11 +51,17 @@ aug_path_list = glob.glob(os.path.join(AUG_IMAGE, '*'))
 aug_path_list.sort()
 aug_mask_path_list = glob.glob(os.path.join(AUG_MASK, '*'))
 aug_mask_path_list.sort()
+
+aug2_path_list = glob.glob(os.path.join(AUG2_IMAGE, '*'))
+aug2_path_list.sort()
+aug2_mask_path_list = glob.glob(os.path.join(AUG2_MASK, '*'))
+aug2_mask_path_list.sort()
 # PREPARE IMAGE , MASK ,AUGMENTATION LISTS
 
 # DATA CHECK
 image_mask_check(image_path_list, mask_path_list)
 image_mask_check(aug_path_list, aug_mask_path_list)
+image_mask_check(aug2_path_list,aug2_mask_path_list)
 # SHUFFLE INDICES
 indices = np.random.permutation(len(image_path_list))
 # DEFINE TEST AND VALID INDICES
@@ -69,10 +80,9 @@ valid_label_path_list = mask_path_list[test_ind:valid_ind]
 train_input_path_list = image_path_list[valid_ind:]
 train_label_path_list = mask_path_list[valid_ind:]
 
-#print(str(len(train_input_path_list))+"+"+str(len(aug_path_list)))
-aug_size=int(len(aug_mask_path_list)/2)
-train_input_path_list=aug_path_list[:aug_size]+train_input_path_list+aug_path_list[aug_size:]
-train_label_path_list=aug_mask_path_list[:aug_size]+train_label_path_list+aug_mask_path_list[aug_size:]
+print("Train Size:"+str(len(train_input_path_list))+"+ Aug Size:"+str(len(aug_path_list))+"+ Aug2 Size:"+str(aug2_count))
+train_input_path_list=train_input_path_list+aug_path_list+aug2_path_list
+train_label_path_list=train_label_path_list+aug_mask_path_list+aug2_mask_path_list
 
 with open("losses.txt", "a") as file_object:
     file_object.write("Batch Size:{} Epoch Size:{}  Image Count:{}".format(batch_size,epochs,len(train_input_path_list)))
@@ -88,7 +98,7 @@ model = UNet(n_channels=3, n_classes=2, bilinear=True)
 criterion =  nn.BCELoss()
 
 # try new below  - optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.0003)
 #optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # IF CUDA IS USED, IMPORT THE MODEL INTO CUDA
 if cuda:
@@ -96,9 +106,9 @@ if cuda:
 val_losses=[]
 train_losses=[]
 
+test_counter=0
 
 # TRAINING THE NEURAL NETWORK
-
 for epoch in range(epochs):
     running_loss = 0
     #In each epoch, images and masks are mixed randomly in order not to output images sequentially.
@@ -108,7 +118,11 @@ for epoch in range(epochs):
     zipped_list=list(unzipped_object)
     train_input_path_list=list(zipped_list[0])
     train_label_path_list=list(zipped_list[1])
-    
+    test_counter+=1
+    if(test_counter==1):
+        print(train_input_path_list[:20])
+        print("----")
+        print(train_label_path_list[:20])
     for ind in tqdm.tqdm(range(steps_per_epoch)):
         batch_input_path_list = train_input_path_list[batch_size*ind:batch_size*(ind+1)]
         #train_input_path_list [0: 4] gets first 4 elements on first entry
@@ -150,7 +164,7 @@ for epoch in range(epochs):
                     break
             val_losses.append(val_loss)
             print('validation loss on epoch {}: {}'.format(epoch, val_loss))
-            torch.save(model, 'colab_unet_adam_aug_25.pt')
+            torch.save(model, 'colab_unet_adam_aug_30_last.pt')
             print("Model Saved!")
             model.train()
     with open("losses.txt", "a") as file_object:
@@ -160,7 +174,7 @@ for epoch in range(epochs):
 with open("losses.txt", "a") as file_object:
     file_object.write("\n")
 
-best_model = torch.load('colab_unet_adam_aug_25.pt')
+best_model = torch.load('colab_unet_adam_aug_30_last.pt')
 
 test_data_path='../data/test_data'
 test_data = glob.glob(os.path.join(test_data_path, '*'))
@@ -212,4 +226,3 @@ def draw_graph(val_losses,train_losses,epochs):
     plt.show()
 
 draw_graph(val_losses,train_losses,epochs)
-

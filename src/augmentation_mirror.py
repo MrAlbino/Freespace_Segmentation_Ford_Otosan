@@ -1,4 +1,6 @@
-#this file is for mirrorin images
+# author: ayberk kose as mralbino
+
+#this file is for mirroring images
 from PIL import Image, ImageOps
 import os
 import numpy as np
@@ -27,8 +29,8 @@ test_size  = 0.1
 indices = np.random.permutation(len(image_path))
 test_ind  = int(len(indices) * test_size)
 valid_ind = int(test_ind + len(indices) * valid_size)
-train_input_path_list = image_path[:5]#We got the elements of the image_path_list list from 1905 to the last element
-train_label_path_list = mask_path[:5]#We got the elements of the mask_path_list list from 1905 to the last element
+train_input_path_list = image_path[:10]#We got the elements of the image_path_list list from 1905 to the last element
+train_label_path_list = mask_path[:10]#We got the elements of the mask_path_list list from 1905 to the last element
 
 for image in tqdm.tqdm(train_input_path_list):
     im=Image.open(image)

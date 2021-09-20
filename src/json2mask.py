@@ -1,3 +1,5 @@
+# author: ayberk kose as mralbino
+
 import numpy as np
 import cv2
 import json

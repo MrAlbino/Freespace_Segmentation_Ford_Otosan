@@ -88,6 +88,8 @@
 
      ### **Expected Mask Format:**
 
+    >This is just an example for you to see mask clearly, original code generates low colored masks maybe you can't even see it, so don't worry.
+
     ![image](images_for_readme/example_mask.png)
 &nbsp;
 
@@ -122,11 +124,10 @@
 
     ```bash
     def one_hot_encoder(data, n_class):
-        encoded_data = np.zeros((*data.shape, n_class), dtype=np.int)
+        encoded_data = np.zeros((*data.shape, n_class), dtype=np.int) 
 
         encoded_labels = [[0,1], [1,0]]
         for lbl in range(n_class):
-
             encoded_label = encoded_labels[lbl]
             numerical_class_inds = data[:,:] == lbl
             encoded_data[numerical_class_inds] = encoded_label
@@ -257,7 +258,7 @@
         ![image](images_for_readme/augmentation.png)
 
     * ### __Augmentation Mirror__
-        The difference is here only mirroring image, not changing any other value. I didn't use this augmentation type in the project but if you need mirroring images feel free to use this.
+        The difference is here only mirroring image, not changing any other value. I used this for better prediction of tunnels and cones. I've added secondary augmentation folder that contains mostly cones and tunnels.
 
         ![image](images_for_readme/aug_mirrored.png)
 
@@ -271,7 +272,7 @@
 
     >This section is about [losses.txt](/src/losses.txt)
 
-    I've added a text file named losses.txt so after every step of epoch validation and train loss values are being calculated. I don't want to lose them everytime they are calculated i saved it inside the 'losses.txt' it helps me to analyze past train transactions.
+    I've added a text file named losses.txt, after every step of epoch validation and train loss values are being calculated. I don't want to lose them. Everytime they are calculated i saved it inside the 'losses.txt' it helps me to analyze past train transactions.
 
 &nbsp;
 

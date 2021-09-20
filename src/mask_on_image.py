@@ -1,6 +1,7 @@
+# author: ayberk kose as mralbino
+
 import os, cv2, tqdm
 import numpy as np
-
 
 MASK_DIR  = '../data/masks'
 IMAGE_DIR = '../data/images'
