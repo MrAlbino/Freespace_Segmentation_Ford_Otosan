@@ -162,10 +162,10 @@
 
     Now we are ready to train our model. First we define our essential parameters for training.
     ```bash
-    valid_size = 0.3
-    test_size  = 0.1
-    batch_size = 8
-    epochs = 25
+    valid_size = 0.1
+    test_size  = 0.04
+    batch_size = 16
+    epochs = 30
     cuda = True
     input_shape = (224, 224)
     n_classes = 2
@@ -179,6 +179,8 @@
     MASK_DIR = os.path.join(DATA_DIR, 'masks')
     AUG_IMAGE=os.path.join(DATA_DIR,'aug_photo')
     AUG_MASK=os.path.join(DATA_DIR,'aug_masks')
+    AUG2_IMAGE=os.path.join(DATA_DIR,'aug2_photos')
+    AUG2_MASK=os.path.join(DATA_DIR,'aug2_masks')
     ```
     Now we are ready to obtain our image paths into the lists.
 
@@ -194,12 +196,20 @@
 
     aug_mask_path_list = glob.glob(os.path.join(AUG_MASK, '*'))
     aug_mask_path_list.sort()
+
+    aug2_path_list = glob.glob(os.path.join(AUG2_IMAGE, '*'))
+    aug2_path_list.sort()
+
+    aug2_mask_path_list = glob.glob(os.path.join(AUG2_MASK, '*'))
+    aug2_mask_path_list.sort()
     ```
     Before continuing we must check our masks and images, are they matching ?
 
     ```bash
     image_mask_check(image_path_list, mask_path_list)
     image_mask_check(aug_path_list, aug_mask_path_list)
+    image_mask_check(aug2_path_list, aug2_mask_path_list)
+
     ```
 
     If there are no errors we can continue. Next step is slicing dataset into three parts; test,train,validation.
@@ -227,9 +237,8 @@
     Last step is to adding augmentated images into train dataset.
 
     ```bash
-    aug_size=int(len(aug_mask_path_list)/2)
-    train_input_path_list=aug_path_list[:aug_size]+train_input_path_list+aug_path_list[aug_size:]
-    train_label_path_list=aug_mask_path_list[:aug_size]+train_label_path_list+aug_mask_path_list[aug_size:]
+    train_input_path_list=train_input_path_list+aug_path_list+aug2_path_list
+    train_label_path_list=train_label_path_list+aug_mask_path_list+aug2_mask_path_list
     ```
 
     Dataset slicing is done. Now we are going to call our model, define loss function and optimizer.
@@ -237,7 +246,7 @@
     ```bash
     model = UNet(n_channels=3, n_classes=2, bilinear=True)
     criterion =  nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0003)
     #optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9) #you can use this too
     ```
     
@@ -248,7 +257,7 @@
     ```
 &nbsp;
 
-8. ## **Augmentation**
+1. ## **Augmentation**
 
     >This is the explanation of [augmentation.py](/src/augmentation.py)
     and [augmentation_mirror.py](/src/augmentation_mirror.py)
@@ -279,10 +288,34 @@
 # **Result**
     
 * ## __Outputs__
-    ![image](images_for_readme/result1.png)
-    ![image](images_for_readme/result2.png)
-    ![image](images_for_readme/result3.png)
-    ![image](images_for_readme/result4.png)
+    | Raw Image      | Labeled Image | Predicted Image     |
+    | :---:        |    :----:   |          :---: |
+    | ![image](images_for_readme/test/raw/446922_cfc_000183.jpg)       | ![image](images_for_readme/test/labeled/446922_cfc_000183.png)       | ![image](images_for_readme/test/predicted/446922_cfc_000183.jpg)  |
+    | ![image](images_for_readme/test/raw/446934_cfc_000195.jpg)   | ![image](images_for_readme/test/labeled/446934_cfc_000195.png)        | ![image](images_for_readme/test/predicted/446934_cfc_000195.jpg)     |
+    | ![image](images_for_readme/test/raw/446939_cfc_000200.jpg)   | ![image](images_for_readme/test/labeled/446939_cfc_000200.png)         | ![image](images_for_readme/test/predicted/446939_cfc_000200.jpg)     |
+    | ![image](images_for_readme/test/raw/446947_cfc_000208.jpg)   | ![image](images_for_readme/test/labeled/446947_cfc_000208.png)        | ![image](images_for_readme/test/predicted/446947_cfc_000208.jpg)     |
+    | ![image](images_for_readme/test/raw/446974_cfc_000235.jpg)   | ![image](images_for_readme/test/labeled/446974_cfc_000235.png)         | ![image](images_for_readme/test/predicted/446974_cfc_000235.jpg)     |
+    | ![image](images_for_readme/test/raw/446994_cfc_000255.jpg)   | ![image](images_for_readme/test/labeled/446994_cfc_000255.png)         | ![image](images_for_readme/test/predicted/446994_cfc_000255.jpg)     |
+    | ![image](images_for_readme/test/raw/447035_cfc_000296.jpg)    | ![image](images_for_readme/test/labeled/447035_cfc_000296.png)        | ![image](images_for_readme/test/predicted/447035_cfc_000296.jpg)     |
+    | ![image](images_for_readme/test/raw/447051_cfc_000312.jpg)    | ![image](images_for_readme/test/labeled/447051_cfc_000312.png)        | ![image](images_for_readme/test/predicted/447051_cfc_000312.jpg)     |
+    | ![image](images_for_readme/test/raw/447055_cfc_000316.jpg)    | ![image](images_for_readme/test/labeled/447055_cfc_000316.png)        | ![image](images_for_readme/test/predicted/447055_cfc_000316.jpg)     |
+    | ![image](images_for_readme/test/raw/447056_cfc_000317.jpg)    | ![image](images_for_readme/test/labeled/447056_cfc_000317.png)       | ![image](images_for_readme/test/predicted/447056_cfc_000317.jpg)     |
+    | ![image](images_for_readme/test/raw/447134_cfc_000395.jpg)    | ![image](images_for_readme/test/labeled/447134_cfc_000395.png)       | ![image](images_for_readme/test/predicted/447134_cfc_000395.jpg)     |
+    | ![image](images_for_readme/test/raw/447160_cfc_000421.jpg)    | ![image](images_for_readme/test/labeled/447160_cfc_000421.png)        | ![image](images_for_readme/test/predicted/447160_cfc_000421.jpg)     |
+    | ![image](images_for_readme/test/raw/447196_cfc_000457.jpg)    | ![image](images_for_readme/test/labeled/447196_cfc_000457.png)        | ![image](images_for_readme/test/predicted/447196_cfc_000457.jpg)     |
+    | ![image](images_for_readme/test/raw/447483_cfc_000744.jpg)    | ![image](images_for_readme/test/labeled/447483_cfc_000744.png)      | ![image](images_for_readme/test/predicted/447483_cfc_000744.jpg)     |
+    | ![image](images_for_readme/test/raw/447522_cfc_000783.jpg)    | ![image](images_for_readme/test/labeled/447522_cfc_000783.png)        | ![image](images_for_readme/test/predicted/447522_cfc_000783.jpg)     |
+    | ![image](images_for_readme/test/raw/447585_cfc_000846.jpg)   | ![image](images_for_readme/test/labeled/447585_cfc_000846.png)       | ![image](images_for_readme/test/predicted/447585_cfc_000846.jpg)     |
+    | ![image](images_for_readme/test/raw/447593_cfc_000854.jpg)    | ![image](images_for_readme/test/labeled/447593_cfc_000854.png)       | ![image](images_for_readme/test/predicted/447593_cfc_000854.jpg)     |
+    | ![image](images_for_readme/test/raw/447599_cfc_000860.jpg)    | ![image](images_for_readme/test/labeled/447599_cfc_000860.png)        | ![image](images_for_readme/test/predicted/447599_cfc_000860.jpg)     |
+    | ![image](images_for_readme/test/raw/447692_cfc_000953.jpg)    | ![image](images_for_readme/test/labeled/447692_cfc_000953.png)        | ![image](images_for_readme/test/predicted/447692_cfc_000953.jpg)     |
+    | ![image](images_for_readme/test/raw/447918_cfc_001179.jpg)    | ![image](images_for_readme/test/labeled/447918_cfc_001179.png)         | ![image](images_for_readme/test/predicted/447918_cfc_001179.jpg)     |
+    | ![image](images_for_readme/test/raw/448020_cfc_001281.jpg)    | ![image](images_for_readme/test/labeled/448020_cfc_001281.png)        | ![image](images_for_readme/test/predicted/448020_cfc_001281.jpg)     |
+    | ![image](images_for_readme/test/raw/449572_cfc_002833.jpg)    | ![image](images_for_readme/test/labeled/449572_cfc_002833.png)       | ![image](images_for_readme/test/predicted/449572_cfc_002833.jpg)     |
+    | ![image](images_for_readme/test/raw/449709_cfc_002970.jpg)    | ![image](images_for_readme/test/labeled/449709_cfc_002970.png)        | ![image](images_for_readme/test/predicted/449709_cfc_002970.jpg)     |
+    | ![image](images_for_readme/test/raw/449710_cfc_002971.jpg)   | ![image](images_for_readme/test/labeled/449710_cfc_002971.png)         | ![image](images_for_readme/test/predicted/449710_cfc_002971.jpg)     |
+    | ![image](images_for_readme/test/raw/451568_cfc_004829.jpg)   | ![image](images_for_readme/test/labeled/451568_cfc_004829.png)      | ![image](images_for_readme/test/predicted/451568_cfc_004829.jpg)     |
+    | ![image](images_for_readme/test/raw/451666_cfc_004927.jpg)   | ![image](images_for_readme/test/labeled/451666_cfc_004927.png)       | ![image](images_for_readme/test/predicted/451666_cfc_004927.jpg)     |
 
 
 
